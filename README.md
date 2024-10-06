@@ -3,6 +3,7 @@ A project to have a database on 2 or plus devices wich can have a communication 
 
 ## Members and contact
 José Ángel López Gutiérrez -> jalg030119@gmail.com
+//
 Carlos Daniel Camilo Aguilar -> mordexcamiloaguilar878689@gmail.com
 
 ## Affiliation
