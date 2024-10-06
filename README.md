@@ -8,7 +8,7 @@ José Ángel López Gutiérrez -> jalg030119@gmail.com
 Carlos Daniel Camilo Aguilar -> mordexcamiloaguilar878689@gmail.com
 
 ## Affiliation
-This is a project of the Distributed dadabases course of the Universidad Nacional Autónoma de México (UNAM), at the Escuela Nacional de Estudios Superiores Unidad Morela (ENES - Morelia).This project is carried out by students of the Bachelor's Degree in Technologies for Information in the Sciences.
+This is a project of the Distributed dadabases course of the Universidad Nacional Autónoma de México (UNAM), at the Escuela Nacional de Estudios Superiores Unidad Morela (ENES - Morelia).This project is carried out by students of the Bachelor's Degree in Technologies for Information in Sciences.
 
 ### Introduction
 The idea of this project is to put it to use the knowledges learned in the course to develop a system of distributed databases, wich has the ability to interact on multiple databases at the same time as long as they are connected (through internet).
