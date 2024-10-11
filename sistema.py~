@@ -1,0 +1,25 @@
+#!/usr/bin/env python3
+
+import mysql.connector
+
+configuraciones = {
+    'Morelia': {
+        'host': 'localhost',
+        'database': 'morelia_db',
+        'user': 'usuario',
+        'password': 'contraseña'
+    },
+    'Pátzcuaro': {
+        'host': 'localhost',
+        'database': 'patzcuro_db',
+        'user': 'usuario',
+        'password': 'contraseña'
+    }
+}
+
+def conectar_db(sucursal):
+    config = configuraciones.get(sucursal)
+    if config:
+        return mysql.connector.connect(**config)
+    else:
+        raise ValueError(f"No se encontró la sucursal: {sucursal}")
