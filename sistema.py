@@ -5,7 +5,7 @@ import os
 
 # IMPORTANTE
 # primer push a la rama main, el anterior estable se encuentra en master.
-#Si ves algún error Dani, ponmelo por mensaje jsjs
+#ESTE CÖDIGO ES PROVISIONAL
 
 
 # Configuraciones a la base de datos!!!
@@ -30,7 +30,7 @@ configuraciones = {
 
 
 
-# Función para conectar con la base de datos de una sucursal
+# conectar con la base de datos de una sucursal
 def conectar_db(sucursal):
     config = configuraciones.get(sucursal)
     if config:
