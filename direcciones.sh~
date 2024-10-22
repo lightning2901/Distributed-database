@@ -1,0 +1,83 @@
+#!/bin/bash
+
+# Configuración del lector de la base de datos
+DB_USER="root"      # usuario de MariaDB
+DB_PASSWORD="Claire13@" # contraseña de MariaDB, probablemente no sea lo ideal ponerla aqui pero, bueno.
+DB_NAME="p1"    # nombre de la base de datos
+DB_HOST="localhost" 
+TABLE_NAME="ubicaciones"  # nombre de la tabla en MariaDB
+
+# Función para buscar por colonia/asentamiento
+function buscar_colonia {
+    echo "Ingresa parte del nombre de la colonia (asentamiento):"
+    read input_colonia
+    
+    # Consulta a la base de datos
+    mariadb -u"$DB_USER" -p"$DB_PASSWORD" -h "$DB_HOST" "$DB_NAME" -e "
+    SELECT d_asenta AS Colonia, d_ciudad AS Ciudad, d_estado AS Estado, d_CP AS Codigo_Postal
+    FROM $TABLE_NAME
+    WHERE d_asenta LIKE '%$input_colonia%'
+    LIMIT 10;
+    "
+}
+
+# Función para buscar por código postal
+function buscar_cp {
+    echo "Ingresa el código postal (o parte del CP):"
+    read input_cp
+    
+    # Consulta a la base de datos
+    mariadb -u"$DB_USER" -p"$DB_PASSWORD" -h "$DB_HOST" "$DB_NAME" -e "
+    SELECT d_asenta AS Colonia, d_ciudad AS Ciudad, d_estado AS Estado, d_CP AS Codigo_Postal
+    FROM $TABLE_NAME
+    WHERE d_CP LIKE '$input_cp%'
+    LIMIT 10;
+    "
+}
+
+# Función para buscar por ciudad y estado
+function buscar_ciudad_estado {
+    echo "Ingresa el nombre de la ciudad:"
+    read input_ciudad
+    echo "Ingresa el nombre del estado:"
+    read input_estado
+
+    # Consulta a la base de datos
+    mariadb -u"$DB_USER" -p"$DB_PASSWORD" -h "$DB_HOST" "$DB_NAME" -e "
+    SELECT d_asenta AS Colonia, d_ciudad AS Ciudad, d_estado AS Estado, d_CP AS Codigo_Postal
+    FROM $TABLE_NAME
+    WHERE d_ciudad LIKE '%$input_ciudad%' AND d_estado LIKE '%$input_estado%'
+    LIMIT 10;
+    "
+}
+
+# Menú de opciones
+while true; do
+    echo "========== Buscador de Direcciones =========="
+    echo "1. Buscar por nombre de colonia"
+    echo "2. Buscar por código postal"
+    echo "3. Buscar por ciudad y estado"
+    echo "4. Salir"
+    echo "============================================="
+    echo "Elige una opción:"
+    read opcion
+
+    case $opcion in
+        1)
+            buscar_colonia
+            ;;
+        2)
+            buscar_cp
+            ;;
+        3)
+            buscar_ciudad_estado
+            ;;
+        4)
+            echo "Saliendo..."
+            exit 0
+            ;;
+        *)
+            echo "Opción no válida. Intenta de nuevo."
+            ;;
+    esac
+done
