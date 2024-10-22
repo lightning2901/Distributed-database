@@ -1,22 +1,34 @@
 #!/usr/bin/env python3
 import uuid
 import mysql.connector
+import os 
 
-# Configuraciones de conexión para las sucursales
+# IMPORTANTE
+# primer push a la rama main, el anterior estable se encuentra en master.
+#Si ves algún error Dani, ponmelo por mensaje jsjs
+
+
+# Configuraciones a la base de datos!!!
+# Antes de ejecutar este archivo debe ejecutarse get_data.sh y otorgarle permisos de ejecución para cargar en ~/.bashrc las variables de entorno de mariadb
+
 configuraciones = {
     'Morelia': {
-        'host': 'localhost',
-        'database': 'morelia_db',
-        'user': 'usuario',
-        'password': 'contraseña'
+        'host': os.getenv('MORELIA_DB_HOST'),
+        'database': os.getenv('MORELIA_DB_NAME'),
+        'user': os.getenv('MORELIA_DB_USER'),
+        'password': os.getenv('MORELIA_DB_PASSWORD')
     },
     'Pátzcuaro': {
-        'host': 'localhost',
-        'database': 'patzcuro_db',
-        'user': 'usuario',
-        'password': 'contraseña'
+        'host': os.getenv('PATZCUARO_DB_HOST'),
+        'database': os.getenv('PATZCUARO_DB_NAME'),
+        'user': os.getenv('PATZCUARO_DB_USER'),
+        'password': os.getenv('PATZCUARO_DB_PASSWORD')
     }
 }
+
+
+
+
 
 # Función para conectar con la base de datos de una sucursal
 def conectar_db(sucursal):
@@ -79,4 +91,5 @@ def prueba_insertar_cliente():
     )
 
 # Llamar a la función de prueba para insertar un cliente
+# No estoy seguro de que funcione, poner a prueba
 prueba_insertar_cliente()
