@@ -1,83 +1,82 @@
 #!/usr/bin/env python3
-
+import uuid
 import mysql.connector
 
-# Conectar a la base de datos principal para manejar las sucursales
-def obtener_conexion_distribucion():
-    return mysql.connector.connect(
-        host='localhost',
-        database='distribucion_db',
-        user='usuario',
-        password='contraseña'
-    )
+# Configuraciones de conexión para las sucursales
+configuraciones = {
+    'Morelia': {
+        'host': 'localhost',
+        'database': 'morelia_db',
+        'user': 'usuario',
+        'password': 'contraseña'
+    },
+    'Pátzcuaro': {
+        'host': 'localhost',
+        'database': 'patzcuro_db',
+        'user': 'usuario',
+        'password': 'contraseña'
+    }
+}
 
-# Obtener la configuración de una sucursal por su nombre
-def obtener_configuracion_sucursal(nombre_sucursal):
-    conn = obtener_conexion_distribucion()
-    cursor = conn.cursor(dictionary=True)
-
-    query = "SELECT * FROM sucursales WHERE nombre_sucursal = %s"
-    cursor.execute(query, (nombre_sucursal,))
-    sucursal = cursor.fetchone()
-
-    cursor.close()
-    conn.close()
-
-    if sucursal:
-        return {
-            'host': sucursal['host'],
-            'database': nombre_sucursal.lower() + '_db',  # Ejemplo: morelia_db
-            'user': sucursal['usuario'],
-            'password': sucursal['password']
-        }
-    else:
-        raise ValueError(f"No se encontró la sucursal: {nombre_sucursal}")
-
-# Conectar a la base de datos de la sucursal dinámica
+# Función para conectar con la base de datos de una sucursal
 def conectar_db(sucursal):
-    config = obtener_configuracion_sucursal(sucursal)
-    return mysql.connector.connect(**config)
+    config = configuraciones.get(sucursal)
+    if config:
+        return mysql.connector.connect(**config)
+    else:
+        raise ValueError(f"No se encontró la sucursal: {sucursal}")
 
-# Función para agregar una nueva sucursal en la tabla
-def agregar_sucursal(nombre_sucursal, host, usuario, password):
+# Función para insertar un nuevo cliente y su dirección
+def insertar_cliente(sucursal, nombre, apellido_paterno, apellido_materno, rfc, calle, numero, colonia, estado, cp):
+    # Generar un UUID único para el cliente
+    id_cliente = str(uuid.uuid4())
+
+    # Conectar a la base de datos de la sucursal seleccionada
+    conn = conectar_db(sucursal)
+    cursor = conn.cursor()
+
     try:
-        conn = obtener_conexion_distribucion()
-        cursor = conn.cursor()
+        # Query para insertar en la tabla cliente
+        query_cliente = """
+        INSERT INTO cliente (id_cliente, nombre, apellidoPaterno, apellidoMaterno, rfc)
+        VALUES (%s, %s, %s, %s, %s)
+        """
+        cursor.execute(query_cliente, (id_cliente, nombre, apellido_paterno, apellido_materno, rfc))
 
-        query = "INSERT INTO sucursales (nombre_sucursal, host, usuario, password) VALUES (%s, %s, %s, %s)"
-        cursor.execute(query, (nombre_sucursal, host, usuario, password))
+        # Query para insertar en la tabla direccion
+        query_direccion = """
+        INSERT INTO direccion (calle, numero, colonia, estado, cp, id_clienteD)
+        VALUES (%s, %s, %s, %s, %s, %s)
+        """
+        cursor.execute(query_direccion, (calle, numero, colonia, estado, cp, id_cliente))
+
+        # Hacer commit para guardar los cambios en la base de datos
         conn.commit()
-        print(f"Sucursal {nombre_sucursal} agregada correctamente.")
+        print(f"Cliente '{nombre} {apellido_paterno}' insertado exitosamente en la sucursal {sucursal}.")
 
     except mysql.connector.Error as err:
-        print(f"Error al agregar sucursal: {err}")
+        # Si hay un error, revertir los cambios
+        print(f"Error: {err}")
+        conn.rollback()
     finally:
         cursor.close()
         conn.close()
 
-# Función de menú con opción para agregar una nueva sucursal
-def menu():
-    while True:
-        print("\nMenú Principal:")
-        print("1. Insertar nuevo cliente")
-        print("2. Actualizar cliente")
-        print("3. Buscar cliente")
-        print("4. Listar todos los clientes")
-        print("5. Agregar nueva sucursal")
-        print("6. Salir")
-        opcion = input("Seleccione una opción: ")
+# Función de prueba
+def prueba_insertar_cliente():
+    # Datos de ejemplo para insertar un cliente en la sucursal de Morelia
+    insertar_cliente(
+        'Morelia',
+        nombre='Juan',
+        apellido_paterno='Pérez',
+        apellido_materno='López',
+        rfc='JPL930923HDF',
+        calle='Calle Falsa',
+        numero='123',
+        colonia='Centro',
+        estado='Michoacán',
+        cp='58000'
+    )
 
-        if opcion == '1':
-            sucursal = input("Seleccione la sucursal: ")
-            # Resto del código para insertar cliente
-        elif opcion == '5':
-            nombre_sucursal = input("Nombre de la nueva sucursal: ")
-            host = input("Host: ")
-            usuario = input("Usuario de la base de datos: ")
-            password = input("Contraseña: ")
-
-            agregar_sucursal(nombre_sucursal, host, usuario, password)
-
-        elif opcion == '6':
-            print("Saliendo del sistema.")
-            break
+# Llamar a la función de prueba para insertar un cliente
+prueba_insertar_cliente()
