@@ -17,3 +17,9 @@ Our system is being developed on linux machines, and relays on using python for 
 ### System Architecture and logic
 
 The idea is: Each machine has a local mariadb server running, and in there is also a DB that is the same on structure on every other machine. We most emphasize that having the same database is a Requirement for the system to eork When the system starts, it'll look for more systems connected to the nerwork.
+
+
+
+## How to execute?
+
+you'll need a linux system and an internet connection 
